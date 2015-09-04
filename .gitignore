@@ -1,0 +1,9 @@
+\.*
+config/webserver_config.properties
+config/jmeter_config.properties
+moodle/*
+moodle_jmeter_data/*
+lib/recorder.bsf
+lib/recorderfunctions.bsf
+
+

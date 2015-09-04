@@ -1,0 +1,158 @@
+#!/usr/bin/env php
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * CLI tool for installing and generating performance site data.
+ *
+ * All CLI utilities uses
+ * - $CFG->performance_dataroot as $CFG->dataroot
+ * - $CFG->performance_prefix as $CFG->perfix
+ * - $CFG->performance_wwwroot as $CFG->wwwroot
+ * Above can be set to same value.
+ *
+ * @package    moodlehq_performancetoolkit_testcourse
+ * @copyright  2015 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+if (isset($_SERVER['REMOTE_ADDR'])) {
+    die(); // No access from web!.
+}
+
+// Basic functions.
+require_once(__DIR__ . '/../moodle/lib/clilib.php');
+
+// CLI options.
+list($options, $unrecognized) = cli_get_params(
+    array(
+        'help'           => false,
+        'install'        => false,
+        'drop'           => false,
+        'dropsite'       => false,
+        'enable'         => false,
+        'disable'        => false,
+        'force'          => false,
+        'testdata'       => false,
+        'backup'         => false,
+        'restore'        => false,
+        'testplan'       => false,
+        'proxyurl'       => false,
+        'proxyport'      => false,
+    ),
+    array(
+        'h' => 'help',
+        'i' => 'install',
+        'd' => 'testdata',
+        'b' => 'backup',
+        'r' => 'restore',
+        't' => 'testplan',
+        'u' => 'proxyurl',
+        'p' => 'proxyport',
+    )
+);
+
+if ($options['install'] or $options['drop']) {
+    define('CACHE_DISABLE_ALL', true);
+}
+
+// Checking generator.php CLI script usage.
+$help = "
+This script have generator utilities.
+
+Usage to create site:
+  vendor/bin/moodle_performance_site [--install|--testdata=SiteSize|--drop|--enable|--disable|--force|--help]
+Usage to create test plan:
+  vendor/bin/moodle_performance_site [--testplan=PlanSize --proxyurl=proxyurl|--proxyport=9090|--enable]
+
+Options:
+--install | -i   Installs the site for performance test
+--testdata | -d  Generate site contents. SiteSize can be either one of xs, s, m, l, xl
+--drop           Drops the database tables and the dataroot contents
+--dropsite       Drops the current site leaving performance data.
+--enable         Enables performance environment and updates tests list
+--disable        Disables test environment
+--force          Ignore existing install if found.
+--backup | -b    Backup site
+--restore | -r   Restore site
+--testplan | -t  Create JMX test plan (xs, s, m, l, xl)
+--proxyurl | -u  BrowserMobProxy url should be given with createtestplan (ex: localhost:9090)
+--proxyport | -p Port on which BrowserMobProxy should listen. If not passed then it will use random port.
+
+-h, --help Print out this help
+
+Example from Moodle root directory:
+\$ vendor/bin/moodle_performance_site --install --testdata=s
+
+More info in http://docs.moodle.org/dev/Performance_testing#Running_tests
+";
+
+if (!empty($options['help'])) {
+    echo $help;
+    exit(0);
+}
+
+if ($unrecognized) {
+    $unrecognized = implode(PHP_EOL . "  ", $unrecognized);
+    die(
+        'Unrecognized options passed:' . PHP_EOL.
+        $unrecognized . PHP_EOL
+    );
+}
+
+// Describe this script.
+define('PERFORMANCE_SITE_GENERATOR', true);
+define('CLI_SCRIPT', true);
+define('NO_OUTPUT_BUFFERING', true);
+define('IGNORE_COMPONENT_CACHE', true);
+
+// Autoload files and ensure we load moodle config, as we will be using moodle code for behat context.
+require_once(__DIR__ . '/../moodle/config.php');
+require_once(__DIR__ . '/../lib/autoload.php');
+
+raise_memory_limit(MEMORY_HUGE);
+
+// Create test plan.
+if ($options['install'] || $options['testdata'] || $options['drop'] ||
+    $options['enable'] || $options['disable'] || $options['backup'] ||
+    $options['restore'] || $options['dropsite']) {
+    // Site install options.
+    $sitedatagenerator = new \moodlehq\performancetoolkit\sitegenerator\generator();
+    $status = $sitedatagenerator->run($options);
+}
+
+// Generate site test plan.
+if ($options['testplan'] || $options['proxyurl'] || $options['proxyport']) {
+    // If either one is empty then throw error.
+    if (($options['testplan'] && $options['proxyurl'])) {
+        $testplan = new \moodlehq\performancetoolkit\testplangenerator\generator();
+        $status = $testplan->create_test_plan(strtolower($options['testplan']), $options['proxyurl'],
+            $options['proxyport'], $options['force']);
+
+    } else {
+        echo 'You must pass both createtestplan and proxyurl:'.PHP_EOL;
+        $status = false;
+    }
+
+}
+
+// If invalid action passed, then show help, else exist with the return code.
+if ($status === false) {
+    echo $help;
+    exit(1);
+}
+
+exit($status);

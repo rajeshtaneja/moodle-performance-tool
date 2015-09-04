@@ -1,0 +1,13 @@
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="#!threadgroupname!#" enabled="true">
+    <stringProp name="TestPlan.comments">Used to fill the caches, logs in every user</stringProp>
+    <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+    <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+        <boolProp name="LoopController.continue_forever">false</boolProp>
+        <stringProp name="LoopController.loops">#!loops!#</stringProp>
+    </elementProp>
+    <stringProp name="ThreadGroup.num_threads">#!users!#</stringProp>
+    <stringProp name="ThreadGroup.ramp_time">#!rampup!#</stringProp>
+    <boolProp name="ThreadGroup.scheduler">false</boolProp>
+    <stringProp name="ThreadGroup.duration"></stringProp>
+    <stringProp name="ThreadGroup.delay"></stringProp>
+</ThreadGroup>

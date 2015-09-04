@@ -1,0 +1,24 @@
+{
+    "name": "moodlehq/performance-toolkit",
+    "description": "Moodle performance toolkit, used for creating course activities and JMeter test plan",
+    "keywords": ["Moodle", "performance", "JMeter"],
+    "type": "library",
+    "authors": [
+        {
+            "name": "Rajesh Taneja",
+            "email": "rajesh@moodle.com",
+            "role": "Test automation developer"
+        }
+    ],
+    "require": {
+        "rmccue/requests": ">=1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "moodlehq\\performancetoolkit\\": "/classes",
+            "moodlehq\\performancetoolkit\\sitegenerator\\": "/sitegenerator/classes",
+            "moodlehq\\performancetoolkit\\testplangenerator\\": "/testplangenerator/classes"
+        }
+    },
+    "bin": ["bin/moodle_performance_site"]
+}

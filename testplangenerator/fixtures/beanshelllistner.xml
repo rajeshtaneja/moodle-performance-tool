@@ -1,0 +1,6 @@
+<BeanShellListener guiclass="TestBeanGUI" testclass="BeanShellListener" testname="Create php array results" enabled="true">
+    <stringProp name="filename">lib/recorder.bsf</stringProp>
+    <stringProp name="parameters"></stringProp>
+    <boolProp name="resetInterpreter">false</boolProp>
+    <stringProp name="script"></stringProp>
+</BeanShellListener>

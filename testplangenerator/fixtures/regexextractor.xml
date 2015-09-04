@@ -1,0 +1,8 @@
+<RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="#!refname!# Regex" enabled="true">
+    <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+    <stringProp name="RegexExtractor.refname">#!refname!#</stringProp>
+    <stringProp name="RegexExtractor.regex">#!regex!#</stringProp>
+    <stringProp name="RegexExtractor.template">$1$</stringProp>
+    <stringProp name="RegexExtractor.default">0</stringProp>
+    <stringProp name="RegexExtractor.match_number">1</stringProp>
+</RegexExtractor>
