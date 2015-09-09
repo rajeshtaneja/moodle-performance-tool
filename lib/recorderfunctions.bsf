@@ -5,7 +5,7 @@ import org.apache.jmeter.util.JMeterUtils;      // http://jakarta.apache.org/jme
 
 testStarted(){
     String filenamepath = "moodle_jmeter_data/runs/tmpfilename.php";
-    FileWriter fstream = new FileWriter(filenamepath, true);
+    FileWriter fstream = new FileWriter(filenamepath);
     BufferedWriter out = new BufferedWriter(fstream);
     out.write("<?php\n");
     out.close();
