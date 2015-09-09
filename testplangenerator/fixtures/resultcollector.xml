@@ -28,5 +28,5 @@
             <threadCounts>true</threadCounts>
         </value>
     </objProp>
-    <stringProp name="filename">moodle_jmeter_data/runs_samples/data.${runtimestamp}.jtl</stringProp>
+    <stringProp name="filename">jmeter_data/runs_samples/data.${runtimestamp}.jtl</stringProp>
 </ResultCollector>

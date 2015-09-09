@@ -18,7 +18,7 @@ set -e
 
 PWD=`pwd`
 CURRENT_FILE_DIRECTORY=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-CURRENT_PLAN_PROP_FILE=${CURRENT_FILE_DIRECTORY}'/../moodle_jmeter_data/moodle_performance_dataroot/currenttestplan.prop'
+CURRENT_PLAN_PROP_FILE=${CURRENT_FILE_DIRECTORY}'/../jmeter_data/moodle_testplan_data/currenttestplan.prop'
 
 # Dependencies.
 . ${CURRENT_FILE_DIRECTORY}'/../lib/lib.sh'
@@ -61,13 +61,8 @@ load_properties $CURRENT_PLAN_PROP_FILE
 
 # Remove current dataroot and restore the provided one (Better using chown...).
 moodle_print "Restoring Site ${basecommit} with data ${SITESIZE}"
-if [[ "$VERBOSE" == "0" ]]; then
-    $CURRENT_FILE_DIRECTORY/moodle_performance_site --restore=site_${installedsitebasecommit}_${sitesize} > /dev/null 2>&1 || \
-        throw_error "The test site is not installed."
-else
-    $CURRENT_FILE_DIRECTORY/moodle_performance_site --restore=site_${installedsitebasecommit}_${sitesize}  || \
-        throw_error "The test site is not installed."
-fi
+$CURRENT_FILE_DIRECTORY/moodle_performance_site --restore=site_${installedsitebasecommit}_${sitesize} > /dev/null 2>&1 || \
+    throw_error "The test site is not installed."
 
 # Move to the moodle directory.
 cd ${CURRENT_FILE_DIRECTORY}'/../moodle'

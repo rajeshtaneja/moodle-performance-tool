@@ -32,8 +32,8 @@ readonly SITE_FULL_NAME="Performance test site"
 readonly SITE_SHORT_NAME="Performance test site"
 readonly SITE_ADMIN_USERNAME="admin"
 readonly SITE_ADMIN_PASSWORD="admin"
-readonly FILE_NAME_USERS="$PERFORMANCE_TOOL_DIRECTORY/moodle_performance_dataroot/"
-readonly FILE_NAME_TEST_PLAN="$PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/testplan.jmx"
+readonly FILE_NAME_USERS="$PERFORMANCE_TOOL_DIRECTORY/moodle_testplan_data/"
+readonly FILE_NAME_TEST_PLAN="$PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/testplan.jmx"
 
 # Checks the $cmds.
 check_cmds
@@ -61,7 +61,7 @@ generate_site_data
 # Generate test plan.
 generate_testplan
 
-# Compress and keep a copy in moodle_jmeter_data/moodle_performance_dataroot, so it can be downloaded by external system.
+# Compress and keep a copy in jmeter_data/moodle_testplan_data, so it can be downloaded by external system.
 save_testplan_files
 
 cd $PERFORMANCE_TOOL_DIRECTORY/moodle

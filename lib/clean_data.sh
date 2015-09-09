@@ -13,10 +13,10 @@ set -e
 # Dependencies.
 . ./lib.sh
 
-delete_files "$PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/runs/*.php"
-delete_files "$PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/runs_samples/*.jtl"
-delete_files "$PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/runs_outputs/*.output"
-delete_files "$PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/logs/*.log"
+delete_files "$PERFORMANCE_TOOL_DIRECTORY/jmeter_data/runs/*.php"
+delete_files "$PERFORMANCE_TOOL_DIRECTORY/jmeter_data/runs_samples/*.jtl"
+delete_files "$PERFORMANCE_TOOL_DIRECTORY/jmeter_data/runs_outputs/*.output"
+delete_files "$PERFORMANCE_TOOL_DIRECTORY/jmeter_data/logs/*.log"
 
 # Also backups.
 delete_files "$PERFORMANCE_TOOL_DIRECTORY/$backupsdir/*"

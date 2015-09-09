@@ -22,7 +22,7 @@ dbprefix="mdl_"
 wwwroot="http://yourwebserver/path/to/moodle-performance-comparison/moodle"
 dataroot="/your/dataroot/directory"
 perfdataroot="/your/performancedataroot/directory"
-# Test plan files will be stored in this directory. Default is moodle_jmeter_data/moodle_performance_dataroot
+# Test plan files will be stored in this directory. Default is jmeter_data/moodle_testplan_data
 # Relative/absolute path to performance tool where jMeter will find the test files.
 testplandataroot="/path/to/testplan/files"
 

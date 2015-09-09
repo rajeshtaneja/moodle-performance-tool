@@ -289,6 +289,9 @@ class installer extends \testing_util {
         // Get real path for our folder.
         $rootPath = realpath($CFG->dataroot);
 
+        // Drop sessions foldre, as it's not needed while restoring.
+        util::drop_dir($rootPath.DIRECTORY_SEPARATOR.'sessions');
+
         // Initialize archive object
         $zip = new \ZipArchive();
 
@@ -363,22 +366,20 @@ class installer extends \testing_util {
     public static function restore_database_state($statename) {
         global $DB;
 
-        $tables = $DB->get_tables(false);
-        if (!$tables or empty($tables['config'])) {
-            // not installed yet
-            return false;
-        }
-
         if (!$data = self::get_table_data($statename)) {
-            // not initialised yet
+            // Not initialised yet.
             return false;
         }
         if (!$structure = self::get_table_structure($statename)) {
-            // not initialised yet
+            // Not initialised yet.
             return false;
         }
 
-        $empties = self::guess_unmodified_empty_tables();
+        // Install a new site and then restore data and sequence.
+        self::drop_database(false);
+        self::install_site();
+
+        $tables = $DB->get_tables(false);
 
         $borkedmysql = false;
         if ($DB->get_dbfamily() === 'mysql') {
@@ -420,7 +421,7 @@ class installer extends \testing_util {
 
         foreach ($data as $table => $records) {
             if ($borkedmysql) {
-                if (empty($records) and isset($empties[$table])) {
+                if (empty($records)) {
                     continue;
                 }
 
@@ -437,15 +438,6 @@ class installer extends \testing_util {
                 $DB->delete_records($table, null);
                 foreach ($records as $record) {
                     $DB->import_record($table, $record, false, true);
-                }
-                continue;
-            }
-
-            if (empty($records)) {
-                if (isset($empties[$table])) {
-                    // table was not modified and is empty
-                } else {
-                    $DB->delete_records($table, array());
                 }
                 continue;
             }
@@ -482,7 +474,7 @@ class installer extends \testing_util {
         }
 
         // Reset all next record ids - aka sequences
-        self::reset_database_sequences($statename, $empties);
+        self::reset_database_sequences($statename);
 
         // Remove extra tables
         foreach ($tables as $table) {
@@ -498,10 +490,9 @@ class installer extends \testing_util {
      * Reset all database sequences to initial values.
      *
      * @static
-     * @param array $empties tables that are known to be unmodified and empty
      * @return void
      */
-    public static function reset_database_sequences($statename, array $empties = null) {
+    public static function reset_database_sequences($statename) {
         global $DB;
 
         if (!$data = self::get_table_data($statename)) {
@@ -601,13 +592,7 @@ class installer extends \testing_util {
         } else {
             // note: does mssql support any kind of faster reset?
             // This also implies mssql will not use unique sequence values.
-            if (is_null($empties)) {
-                $empties = self::guess_unmodified_empty_tables();
-            }
             foreach ($data as $table => $records) {
-                if (isset($empties[$table])) {
-                    continue;
-                }
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                     $DB->get_manager()->reset_sequence($table);
                 }
@@ -906,12 +891,12 @@ class installer extends \testing_util {
         // Restore database and dataroot state, before proceeding.
         echo "Restoring database state" . PHP_EOL;
         if (!self::restore_database_state($statename)) {
-            self::performance_exception("Error restoring state db: " . $statename);
+            util::performance_exception("Error restoring state db: " . $statename);
         }
 
         echo "Restoring dataroot state" . PHP_EOL;
         if (!self::restore_dataroot($statename)) {
-            self::performance_exception("Error restoring state data: " . $statename);
+            util::performance_exception("Error restoring state data: " . $statename);
         }
 
         echo "Site restored to $statename state" . PHP_EOL;

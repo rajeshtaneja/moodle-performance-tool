@@ -2,8 +2,8 @@
 #
 # Common functions.
 
-readonly PERFORMANCE_TOOL_DIRECTORY=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/..
-readonly PERMISSIONS=775
+PERFORMANCE_TOOL_DIRECTORY=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/..
+PERMISSIONS=775
 
 ################################################
 # Checks that last command was successfully executed
@@ -71,7 +71,7 @@ delete_files()
 ################################################
 check_cmds()
 {
-    local readonly genericstr=" has a valid value or overwrite the default one using webserver_config.properties"
+    genericstr=" has a valid value or overwrite the default one using webserver_config.properties"
 
     ${phpcmd} -v > /dev/null || \
         throw_error 'Ensure $phpcmd'$genericstr

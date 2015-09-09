@@ -167,7 +167,7 @@ function install_site {
             $PERFORMANCE_TOOL_DIRECTORY/bin/moodle_performance_site --backup=init_${basecommit} || \
                 throw_error "The test site is not installed."
         fi
-        echo "installedsitebasecommit=$basecommit" > $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/currenttestplan.prop
+        echo "installedsitebasecommit=$basecommit" > $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
     else
         moodle_print "Base site already installed ($basecommit), skipping installation..."
     fi
@@ -198,8 +198,8 @@ function generate_site_data {
     fi
 
     if [[ "$GENERATEDATA" == "1" ]]; then
-        if [[ -f $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/currenttestplan.prop ]]; then
-            . $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/currenttestplan.prop
+        if [[ -f $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop ]]; then
+            . $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
 
             # If sitesize and base commits are same then no need to do anything.
             if [[ "$installedsitebasecommit" != "$basecommit" ]]; then
@@ -209,13 +209,8 @@ function generate_site_data {
 
         # Restore init site
         if [[ "$RESTOREINIT" -eq 1 ]]; then
-            if [[ "$VERBOSE" == "0" ]]; then
-                $PERFORMANCE_TOOL_DIRECTORY/bin/moodle_performance_site --restore=init_${basecommit} > /dev/null 2>&1 || \
-                    throw_error "The test site is not installed."
-            else
-                $PERFORMANCE_TOOL_DIRECTORY/bin/moodle_performance_site --restore=init_${basecommit} || \
-                    throw_error "The test site is not installed."
-            fi
+            $PERFORMANCE_TOOL_DIRECTORY/bin/moodle_performance_site --restore=init_${basecommit} > /dev/null 2>&1 || \
+                throw_error "The test site is not installed."
         fi
 
         # Generate data for the specified site size.
@@ -236,8 +231,8 @@ function generate_site_data {
                 throw_error "Error backing up data generated site."
         fi
         # Re-write the prop file.
-        echo "installedsitebasecommit=$basecommit" > $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/currenttestplan.prop
-        echo "sitesize=$SITESIZE" >> $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/currenttestplan.prop
+        echo "installedsitebasecommit=$basecommit" > $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
+        echo "sitesize=$SITESIZE" >> $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
     else
         moodle_print "No need to generate data. It's already generated."
     fi
@@ -298,8 +293,8 @@ function generate_testplan {
         exit 1
     fi
 
-    if [[ -f $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/currenttestplan.prop ]]; then
-        . $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/currenttestplan.prop
+    if [[ -f $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop ]]; then
+        . $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
 
         # If sitesize and base commits are same then no need to do anything.
         if [ "$sitesize" == "$SITESIZE" ] && [ "$installedsitebasecommit" == "$basecommit" ]  && [ "$testplansize" == "$TESTPLANSIZE" ]; then
@@ -325,8 +320,8 @@ function generate_testplan {
         browsermob_selenium start
 
         # Restore data site.
-        if [[ -f $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/currenttestplan.prop ]]; then
-            . $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/currenttestplan.prop
+        if [[ -f $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop ]]; then
+            . $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
 
             # If sitesize and base commits are same then no need to do anything.
             if [ "$sitesize" == "$SITESIZE" ] && [ "$installedsitebasecommit" == "$basecommit" ]; then
@@ -340,13 +335,8 @@ function generate_testplan {
 
         if [[ "$RESTOREDATASITE" -eq 1 ]]; then
             moodle_print "Restoring Site ${basecommit} with data ${SITESIZE}"
-            if [[ "$VERBOSE" == "0" ]]; then
-                $PERFORMANCE_TOOL_DIRECTORY/bin/moodle_performance_site --restore=site_${basecommit}_${SITESIZE} > /dev/null 2>&1 || \
-                    throw_error "The test site is not installed."
-            else
-                $PERFORMANCE_TOOL_DIRECTORY/bin/moodle_performance_site --restore=site_${basecommit}_${SITESIZE}  || \
-                    throw_error "The test site is not installed."
-            fi
+            $PERFORMANCE_TOOL_DIRECTORY/bin/moodle_performance_site --restore=site_${basecommit}_${SITESIZE} > /dev/null 2>&1 || \
+                throw_error "The test site is not installed."
         fi
 
         moodle_print "Generating testplan for ${basecommit}, size ${TESTPLANSIZE}"
@@ -359,9 +349,9 @@ function generate_testplan {
         fi
 
         # Save information about the current test plan.
-        echo "installedsitebasecommit=$basecommit" > $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/currenttestplan.prop
-        echo "sitesize=$SITESIZE" >> $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/currenttestplan.prop
-        echo "testplansize=$TESTPLANSIZE" >> $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/currenttestplan.prop
+        echo "installedsitebasecommit=$basecommit" > $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
+        echo "sitesize=$SITESIZE" >> $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
+        echo "testplansize=$TESTPLANSIZE" >> $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
 
         # Stop browsermob and selenium
         moodle_print "Stopping browsermob proxy"
@@ -425,13 +415,13 @@ sitecommit=\"$sitecommit\""
 function save_testplan_files {
     local dir=`pwd`
     cd $perfdataroot/testplangenerator/moodle_testplan/
-    tar -cvzf $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/moodle_testplan.tar.gz * > /dev/null 2>&1
+    tar -cvzf $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/moodle_testplan.tar.gz * > /dev/null 2>&1
     # Untar all files in the testplan, as expected by the plan.
     if [[ -d $testplandataroot ]]; then
         mkdir -p $testplandataroot
     fi
     cd $testplandataroot
-    FILE_NAMES_TEST_PLAN=$(tar -xvzf $PERFORMANCE_TOOL_DIRECTORY/moodle_jmeter_data/moodle_performance_dataroot/moodle_testplan.tar.gz)
+    FILE_NAMES_TEST_PLAN=$(tar -xvzf $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/moodle_testplan.tar.gz)
 
     cd $dir
 }

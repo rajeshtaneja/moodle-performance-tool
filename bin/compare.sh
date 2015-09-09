@@ -27,20 +27,20 @@ timestart=`date +%s`
 groupname="compare_"`date '+%Y%m%d%H%M'`
 
 # Hardcoding S as the size, with 5 loops is enough to have consistent results.
-. $CURRENT_DIRECTORY/lib/before_run_setup.sh -s $defaultcomparesitesize -t $defaultcomparetestplansize || \
+$CURRENT_DIRECTORY/before_run_setup.sh -s $defaultcomparesitesize -t $defaultcomparetestplansize || \
     throw_error "Before run setup didn't finish as expected"
 
-. $CURRENT_DIRECTORY/test_runner.sh -n "$groupname" -d "before" || \
+$CURRENT_DIRECTORY/test_runner.sh -n "$groupname" -d "before" || \
     throw_error "The before test run didn't finish as expected"
 
 # We don't restart the browser here, this is a development machine
 # and probably you are not staring at the CLI waiting for it to
 # finish.
 
-. $CURRENT_DIRECTORY/after_run_setup.sh || \
+$CURRENT_DIRECTORY/after_run_setup.sh || \
     throw_error "After run setup didn't finish as expected"
 
-. $CURRENT_DIRECTORY/lib/test_runner.sh -n "$groupname" -d "after" || \
+$CURRENT_DIRECTORY/test_runner.sh -n "$groupname" -d "after" || \
     throw_error "The after test run didn't finish as expected"
 
 timeend=`date +%s`
@@ -55,8 +55,8 @@ Comparison test finished successfully.
 echo "$outputinfo"
 
 # Opens the comparison web interface in a browser.
-if [[ "$OSTYPE" == "darwin"* ]];then
-    open -a $browser "$wwwroot/../"
-else
-    $browser "$wwwroot/../"
-fi
+#if [[ "$OSTYPE" == "darwin"* ]];then
+#    open -a $browser "$wwwroot/../"
+#else
+#    $browser "$wwwroot/../"
+#fi

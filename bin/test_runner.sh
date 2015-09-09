@@ -30,7 +30,7 @@ set -e
 
 PWD=`pwd`
 CURRENT_FILE_DIRECTORY=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-LOGS_DIR=${CURRENT_FILE_DIRECTORY}'/../moodle_jmeter_data'
+LOGS_DIR=${CURRENT_FILE_DIRECTORY}'/../jmeter_data'
 
 # Dependencies.
 . $CURRENT_FILE_DIRECTORY/../lib/lib.sh
@@ -63,9 +63,9 @@ TESTPLAN_RUN_OUTPUT=${LOGS_DIR}'/runs_outputs/'${datestring}'.output'
 TESTPLAN_INCLUDE_LOGS=' -Jincludelogs='${includelogs}
 TESTPLAN_SAMPLER=' -Jbeanshell.listener.init='${CURRENT_FILE_DIRECTORY}'/../lib/recorderfunctions.bsf'
 
-# Fix moodle_jmeter_data pathin recorder.bsf and recorderfunctions.bsf
-sed -i -e 's@".*moodle_jmeter_data/@"'${LOGS_DIR}'/@g' ${CURRENT_FILE_DIRECTORY}/../lib/recorderfunctions.bsf
-sed -i -e 's@ ".*moodle_jmeter_data/@ "'${LOGS_DIR}'/@g' ${CURRENT_FILE_DIRECTORY}/../lib/recorder.bsf
+# Fix jmeter_data pathin recorder.bsf and recorderfunctions.bsf
+sed -i -e 's@".*jmeter_data/@"'${LOGS_DIR}'/@g' ${CURRENT_FILE_DIRECTORY}/../lib/recorderfunctions.bsf
+sed -i -e 's@ ".*jmeter_data/@ "'${LOGS_DIR}'/@g' ${CURRENT_FILE_DIRECTORY}/../lib/recorder.bsf
 
 # Run it baby! (without GUI).
 echo "#######################################################################"
