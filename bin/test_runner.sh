@@ -65,7 +65,7 @@ TESTPLAN_SAMPLER=' -Jbeanshell.listener.init='${CURRENT_FILE_DIRECTORY}'/../lib/
 
 # Fix moodle_jmeter_data pathin recorder.bsf and recorderfunctions.bsf
 sed -i -e 's@".*moodle_jmeter_data/@"'${LOGS_DIR}'/@g' ${CURRENT_FILE_DIRECTORY}/../lib/recorderfunctions.bsf
-sed -i -e 's@".*moodle_jmeter_data/@"'${LOGS_DIR}'/@g' ${CURRENT_FILE_DIRECTORY}/../lib/recorder.bsf
+sed -i -e 's@ ".*moodle_jmeter_data/@ "'${LOGS_DIR}'/@g' ${CURRENT_FILE_DIRECTORY}/../lib/recorder.bsf
 
 # Run it baby! (without GUI).
 echo "#######################################################################"
@@ -80,7 +80,7 @@ $jmeterbin \
     -n \
     -j $TESTPLAN_LOG_FILE \
     -t $TESTPLAN_JMX \
-    -Jcsvfilepath=$TESTPLAN_SITE_DATA_FILE \
+    $TESTPLAN_CSV_PATH \
     $TESTPLAN_GROUP \
     $TESTPLAN_DESC \
     -Jsiteversion="$siteversion" \

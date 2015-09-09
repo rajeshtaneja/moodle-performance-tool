@@ -144,9 +144,9 @@ class util {
      * @return array.
      */
     public static function get_config() {
-        global $CFG;
-        if (file_exists($CFG->dirroot . DIRECTORY_SEPARATOR . 'testplan.json')) {
-            $jsonconfig = file_get_contents($CFG->dirroot . DIRECTORY_SEPARATOR . 'testplan.json');
+        // Check if  user has a custom config file.
+        if (file_exists(__DIR__ . '/../../testplan.json')) {
+            $jsonconfig = file_get_contents(__DIR__ . '/../../testplan.json');
         } else {
             $jsonconfig = file_get_contents(__DIR__ . '/../testplan.json-dist');
         }

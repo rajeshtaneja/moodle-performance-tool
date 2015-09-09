@@ -64,7 +64,6 @@ class testplan_writer {
         }
 
         // Update throughput and any other global value found.
-        //${__property(throughput,throughput,120.0)}
         $globalconfig = util::get_config();
         $globalconfig = $globalconfig['global'];
 

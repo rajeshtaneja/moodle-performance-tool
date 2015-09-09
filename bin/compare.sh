@@ -27,10 +27,10 @@ timestart=`date +%s`
 groupname="compare_"`date '+%Y%m%d%H%M'`
 
 # Hardcoding S as the size, with 5 loops is enough to have consistent results.
-. $CURRENT_DIRECTORY/lib/before_run_setup.sh $defaultcomparesize || \
+. $CURRENT_DIRECTORY/lib/before_run_setup.sh -s $defaultcomparesitesize -t $defaultcomparetestplansize || \
     throw_error "Before run setup didn't finish as expected"
 
-. $CURRENT_DIRECTORY/test_runner.sh "$groupname" "before" || \
+. $CURRENT_DIRECTORY/test_runner.sh -n "$groupname" -d "before" || \
     throw_error "The before test run didn't finish as expected"
 
 # We don't restart the browser here, this is a development machine
@@ -40,7 +40,7 @@ groupname="compare_"`date '+%Y%m%d%H%M'`
 . $CURRENT_DIRECTORY/after_run_setup.sh || \
     throw_error "After run setup didn't finish as expected"
 
-. $CURRENT_DIRECTORY/lib/test_runner.sh "$groupname" "after" || \
+. $CURRENT_DIRECTORY/lib/test_runner.sh -n "$groupname" -d "after" || \
     throw_error "The after test run didn't finish as expected"
 
 timeend=`date +%s`

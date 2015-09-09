@@ -62,9 +62,9 @@ class util {
      * @return array.
      */
     public static function get_config() {
-        global $CFG;
-        if (file_exists($CFG->dirroot . DIRECTORY_SEPARATOR . 'sitegenerator.json')) {
-            $jsonconfig = file_get_contents($CFG->dirroot . DIRECTORY_SEPARATOR . 'sitegenerator.json');
+        // Check if  user has a custom config file.
+        if (file_exists(__DIR__ . '/../../sitegenerator.json')) {
+            $jsonconfig = file_get_contents(__DIR__ . '/../../sitegenerator.json');
         } else {
             $jsonconfig = file_get_contents(__DIR__ . '/../sitegenerator.json-dist');
         }

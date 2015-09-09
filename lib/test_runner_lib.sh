@@ -49,7 +49,7 @@ function check_before_run_cmd {
         r) TESTPLAN_RAMPUP=' -Jrampup='${OPTARG} ;;
         t) TESTPLAN_THROUGHPUT=' -Jthroughput='${OPTARG} ;;
         p) TESTPLAN_JMX=${OPTARG} ;;
-        f) TESTPLAN_FILE_PATH=' -Jcsvfilepath='${OPTARG} ;;
+        f) TESTPLAN_CSV_PATH=' -Jcsvfilepath='${OPTARG} ;;
         s) TESTPLAN_SITE_DATA_FILE=${OPTARG} ;;
         h) test_runner_usage ;;
         ?) test_runner_usage ;;

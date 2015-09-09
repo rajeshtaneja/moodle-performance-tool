@@ -106,4 +106,5 @@ backupsdir="/your/directory/with/a/lot/of/free/space"
 # as there is moodle code that only runs only certain
 # timing conditions; this is balanced leading to stable
 # results using a S size or higher.
-#defaultcomparesize=S
+#defaultcomparesitesize=S
+#defaultcomparetestplansize=S
