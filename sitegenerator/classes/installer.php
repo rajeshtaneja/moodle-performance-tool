@@ -364,7 +364,7 @@ class installer extends \testing_util {
      * @return bool true if reset done, false if skipped
      */
     public static function restore_database_state($statename) {
-        global $DB;
+        global $DB, $CFG;
 
         if (!$data = self::get_table_data($statename)) {
             // Not initialised yet.
@@ -377,6 +377,10 @@ class installer extends \testing_util {
 
         // Install a new site and then restore data and sequence.
         self::drop_database(false);
+        // xmldb_main_install gets system id from db which is causing it to fail randomly.
+        // Set it to make it initial install.
+        // Check: during_initial_install()
+        $CFG->rolesactive = false;
         self::install_site();
 
         $tables = $DB->get_tables(false);
@@ -888,6 +892,9 @@ class installer extends \testing_util {
      * @return int 0 on success else error code.
      */
     public static function restore_site_state($statename = "default") {
+        // Clean up the dataroot folder.
+        util::drop_dir(self::get_dataroot() . '/');
+
         // Restore database and dataroot state, before proceeding.
         echo "Restoring database state" . PHP_EOL;
         if (!self::restore_database_state($statename)) {

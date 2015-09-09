@@ -254,7 +254,7 @@ function browsermob_selenium {
             exit 1
         fi
         ${browsermobproxypath} -port 9090 --use-littleproxy true &> /dev/null &
-        sleep 5
+        sleep 10
 
         # Run selenium.
         if [[ "$seleniumjarpath" == "" ]]; then
@@ -317,6 +317,7 @@ function generate_testplan {
         # Start browsermob and selenium
         moodle_print "Starting browsermob proxy"
         browsermob_selenium stop
+        sleep 2
         browsermob_selenium start
 
         # Restore data site.

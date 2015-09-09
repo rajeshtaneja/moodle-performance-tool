@@ -59,13 +59,16 @@ check_cmds
 # Get generated test plan values.
 load_properties $CURRENT_PLAN_PROP_FILE
 
+# Move to moodle dirroot and begin setting up everything.
+cd $PERFORMANCE_TOOL_DIRECTORY/moodle
+
+echo "### Checking out $repository ($basecommit)"
+checkout_branch $repository 'origin' $basecommit
+
 # Remove current dataroot and restore the provided one (Better using chown...).
-moodle_print "Restoring Site ${basecommit} with data ${SITESIZE}"
+echo "Restoring Site ${basecommit} with data ${sitesize}"
 $CURRENT_FILE_DIRECTORY/moodle_performance_site --restore=site_${installedsitebasecommit}_${sitesize} > /dev/null 2>&1 || \
     throw_error "The test site is not installed."
-
-# Move to the moodle directory.
-cd ${CURRENT_FILE_DIRECTORY}'/../moodle'
 
 # Upgrading moodle, although we are not sure that before and after branches are different.
 echo "Upgrading Moodle ($basecommit) to $afterbranch"
@@ -75,9 +78,6 @@ ${phpcmd} admin/cli/upgrade.php --non-interactive --allow-unstable > /dev/null |
 
 # Stores the site data in an jmeter-accessible file.
 save_moodle_site_information
-
-# Returning to the root.
-cd ..
 
 # Info, all went as expected and we are all happy.
 outputinfo="
