@@ -17,9 +17,9 @@
                         <stringProp name="Argument.value">{{MOODLE_VERSION}}</stringProp>
                         <stringProp name="Argument.metadata">=</stringProp>
                     </elementProp>
-                    <elementProp name="size" elementType="Argument">
-                        <stringProp name="Argument.name">size</stringProp>
-                        <stringProp name="Argument.value">{{SIZE}}</stringProp>
+                    <elementProp name="dataplansize" elementType="Argument">
+                        <stringProp name="Argument.name">dataplansize</stringProp>
+                        <stringProp name="Argument.value">{{DATA_PLAN_SIZE}}</stringProp>
                         <stringProp name="Argument.metadata">=</stringProp>
                     </elementProp>
                     <elementProp name="host" elementType="Argument">
@@ -30,6 +30,21 @@
                     <elementProp name="sitepath" elementType="Argument">
                         <stringProp name="Argument.name">sitepath</stringProp>
                         <stringProp name="Argument.value">{{SITE_PATH}}</stringProp>
+                        <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                    <elementProp name="dataplanversion" elementType="Argument">
+                        <stringProp name="Argument.name">dataplanversion</stringProp>
+                        <stringProp name="Argument.value">{{DATA_PLAN_VERSION}}</stringProp>
+                        <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                    <elementProp name="testplansize" elementType="Argument">
+                        <stringProp name="Argument.name">testplansize</stringProp>
+                        <stringProp name="Argument.value">{{TEST_PLAN_SIZE}}</stringProp>
+                        <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                    <elementProp name="testplanversion" elementType="Argument">
+                        <stringProp name="Argument.name">testplanversion</stringProp>
+                        <stringProp name="Argument.value">{{TEST_PLAN_VERSION}}</stringProp>
                         <stringProp name="Argument.metadata">=</stringProp>
                     </elementProp>
                 </collectionProp>

@@ -44,11 +44,11 @@ if [ ! -e $CURRENT_PLAN_PROP_FILE ]; then
     echo $errormsg >&2
     exit 1
 fi
-if [ ! -d "moodle" ]; then
+if [ ! -d ${CURRENT_FILE_DIRECTORY}"/../moodle" ]; then
     echo $errormsg >&2
     exit 1
 fi
-if [ ! -d "moodle/.git" ]; then
+if [ ! -d ${CURRENT_FILE_DIRECTORY}"/../moodle/.git" ]; then
     echo $errormsg >&2
     exit 1
 fi
@@ -66,9 +66,9 @@ echo "### Checking out $repository ($basecommit)"
 checkout_branch $repository 'origin' $basecommit
 
 # Remove current dataroot and restore the provided one (Better using chown...).
-echo "Restoring Site ${basecommit} with data ${sitesize}"
-$CURRENT_FILE_DIRECTORY/moodle_performance_site --restore=site_${installedsitebasecommit}_${sitesize} > /dev/null 2>&1 || \
-    throw_error "The test site is not installed."
+echo "Restoring Site ${basecommit} with data ${dataplansize}"
+$CURRENT_FILE_DIRECTORY/moodle_performance_site --restore=site_${installedsitebasecommit}_${dataplansize}_${dataplanversion} > /dev/null 2>&1 || \
+    throw_error "Before run was not executed, site state site_${installedsitebasecommit}_${dataplansize}_${dataplanversion} doesn't exist."
 
 # Upgrading moodle, although we are not sure that before and after branches are different.
 echo "Upgrading Moodle ($basecommit) to $afterbranch"

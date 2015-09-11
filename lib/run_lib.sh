@@ -14,6 +14,7 @@ function before_run_usage() {
 #   -s : Size of data generated for size (XS, S, M, L, XL, XXL)        #
 #   -t : Test plan size (XS, S, M, L, XL, XXL)                         #
 #   -v : (optional) Verbose                                            #
+#   -f : (optional) force clean all previous setup and start fresh     #
 #   -h : Help                                                          #
 #                                                                      #
 ########################################################################
@@ -30,12 +31,13 @@ function check_before_run_cmd() {
     # Default is no verbose.
     VERBOSE=0
 
-    while getopts 'hs:t:v' flag; do
+    while getopts 'hfs:t:v' flag; do
       case "${flag}" in
         h) before_run_usage ;;
         v) VERBOSE=1 ;;
         s) SITESIZE=$OPTARG ;;
         t) TESTPLANSIZE=$OPTARG ;;
+        f) FORCECLEAN=1 ;;
         ?) before_run_usage ;;
       esac
     done
@@ -192,9 +194,19 @@ function generate_site_data {
         exit 1
     fi
 
+    DATA_PLAN_VERSION=$(${PERFORMANCE_TOOL_DIRECTORY}/bin/moodle_performance_site -v=dataplan)
+
+    # Following site state should be either created or exists.
+    local sitestate='site_'${basecommit}'_'${SITESIZE}'_'${DATA_PLAN_VERSION}
+
     # Check if site has been generated for the specified size and base commit.
-    if [[ -f $perfdataroot/sitegenerator/site_${basecommit}_${SITESIZE}.zip ]]; then
+    if [[ -f $perfdataroot/sitegenerator/${sitestate}.zip ]]; then
         GENERATEDATA=0
+    fi
+
+    if [[ ! -z $FORCECLEAN ]]; then
+        delete_files $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
+        GENERATEDATA=1
     fi
 
     if [[ "$GENERATEDATA" == "1" ]]; then
@@ -202,7 +214,7 @@ function generate_site_data {
             . $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
 
             # If sitesize and base commits are same then no need to do anything.
-            if [[ "$installedsitebasecommit" != "$basecommit" ]]; then
+            if [[ "$installedsitebasecommit" == "$basecommit" ]]; then
                 RESTOREINIT=0
             fi
         fi
@@ -224,15 +236,16 @@ function generate_site_data {
 
         # Back up data to be used later.
         if [[ "$VERBOSE" == "0" ]]; then
-            $PERFORMANCE_TOOL_DIRECTORY/bin/moodle_performance_site --backup=site_${basecommit}_${SITESIZE} > /dev/null 2>&1 || \
+            $PERFORMANCE_TOOL_DIRECTORY/bin/moodle_performance_site --backup=${sitestate} > /dev/null 2>&1 || \
                 throw_error "Error backing up data generated site."
         else
-            $PERFORMANCE_TOOL_DIRECTORY/bin/moodle_performance_site --backup=site_${basecommit}_${SITESIZE}  || \
+            $PERFORMANCE_TOOL_DIRECTORY/bin/moodle_performance_site --backup=${sitestate}  || \
                 throw_error "Error backing up data generated site."
         fi
         # Re-write the prop file.
         echo "installedsitebasecommit=$basecommit" > $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
-        echo "sitesize=$SITESIZE" >> $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
+        echo "dataplansize=$SITESIZE" >> $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
+        echo "dataplanversion=$DATA_PLAN_VERSION" >> $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
     else
         moodle_print "No need to generate data. It's already generated."
     fi
@@ -286,9 +299,13 @@ function browsermob_selenium {
 ################################################
 function generate_testplan {
 
+    # Get testplan and dataplan versions first.
+    TEST_PLAN_VERSION=$(${PERFORMANCE_TOOL_DIRECTORY}/bin/moodle_performance_site -v=testplan)
+    DATA_PLAN_VERSION=$(${PERFORMANCE_TOOL_DIRECTORY}/bin/moodle_performance_site -v=dataplan)
+
     # This function expects the site is installed for the basecommit, with specified size.
     # Exit if it's not installed.
-    if [[ ! -f $perfdataroot/sitegenerator/site_${basecommit}_${SITESIZE}.zip ]]; then
+    if [[ ! -f $perfdataroot/sitegenerator/site_${basecommit}_${SITESIZE}_${DATA_PLAN_VERSION}.zip ]]; then
         echo "There is no site installed for base commit: ${basecommit} with size: ${SITESIZE}"
         exit 1
     fi
@@ -297,7 +314,9 @@ function generate_testplan {
         . $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
 
         # If sitesize and base commits are same then no need to do anything.
-        if [ "$sitesize" == "$SITESIZE" ] && [ "$installedsitebasecommit" == "$basecommit" ]  && [ "$testplansize" == "$TESTPLANSIZE" ]; then
+        if [ "$dataplansize" == "$SITESIZE" ] && [ "$installedsitebasecommit" == "$basecommit" ]  \
+            && [ "$testplansize" == "$TESTPLANSIZE" ] && [ "$DATA_PLAN_VERSION" == "$dataplanversion" ] \
+            && [ "$TEST_PLAN_VERSION" == "$testplanversion" ]; then
             GENEREATE=0
         else
             GENEREATE=1
@@ -307,7 +326,7 @@ function generate_testplan {
     fi
 
     # Change to moodle dir.
-    if [[ "$GENEREATE" == "1" ]]; then
+    if [[ "$GENEREATE" == "1" ]] || [[ ! -z $FORCECLEAN ]]; then
         local dir=`pwd`
         local RESTOREDATASITE=1
 
@@ -315,7 +334,7 @@ function generate_testplan {
         cd $PERFORMANCE_TOOL_DIRECTORY/moodle
 
         # Start browsermob and selenium
-        moodle_print "Starting browsermob proxy"
+        moodle_print "Starting browsermob proxy and selenium"
         browsermob_selenium stop
         sleep 2
         browsermob_selenium start
@@ -325,7 +344,8 @@ function generate_testplan {
             . $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
 
             # If sitesize and base commits are same then no need to do anything.
-            if [ "$sitesize" == "$SITESIZE" ] && [ "$installedsitebasecommit" == "$basecommit" ]; then
+            if [ "$dataplansize" == "$SITESIZE" ] && [ "$installedsitebasecommit" == "$basecommit" ] \
+                && [ "$DATA_PLAN_VERSION" == "$dataplanversion" ]; then
                 RESTOREDATASITE=0
             else
                 RESTOREDATASITE=1
@@ -336,7 +356,7 @@ function generate_testplan {
 
         if [[ "$RESTOREDATASITE" -eq 1 ]]; then
             moodle_print "Restoring Site ${basecommit} with data ${SITESIZE}"
-            $PERFORMANCE_TOOL_DIRECTORY/bin/moodle_performance_site --restore=site_${basecommit}_${SITESIZE} > /dev/null 2>&1 || \
+            $PERFORMANCE_TOOL_DIRECTORY/bin/moodle_performance_site --restore=site_${basecommit}_${SITESIZE}_${DATA_PLAN_VERSION} > /dev/null 2>&1 || \
                 throw_error "The test site is not installed."
         fi
 
@@ -351,8 +371,10 @@ function generate_testplan {
 
         # Save information about the current test plan.
         echo "installedsitebasecommit=$basecommit" > $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
-        echo "sitesize=$SITESIZE" >> $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
+        echo "dataplansize=$SITESIZE" >> $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
+        echo "dataplanversion=$DATA_PLAN_VERSION" >> $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
         echo "testplansize=$TESTPLANSIZE" >> $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
+        echo "testplanversion=$TEST_PLAN_VERSION" >> $PERFORMANCE_TOOL_DIRECTORY/jmeter_data/moodle_testplan_data/currenttestplan.prop
 
         # Stop browsermob and selenium
         moodle_print "Stopping browsermob proxy"

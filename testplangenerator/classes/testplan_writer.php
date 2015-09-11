@@ -16,7 +16,7 @@
 
 namespace moodlehq\performancetoolkit\testplangenerator;
 
-use moodlehq\performancetoolkit\testplangenerator\util;
+use moodlehq\performancetoolkit\sitegenerator\util as dataplanutil;
 
 /**
  * Utility to write test plan.
@@ -53,10 +53,12 @@ class testplan_writer {
         // Update fixed attributes.
         $propertiestoupdate = array(
             'moodleversion' => $CFG->version,
-            'size' => $size,
+            'dataplansize' => get_config('core', 'performancesitedata'),
             'host' => $urlcomponents['host'],
             'sitepath' => $urlcomponents['path'],
-            'generatedsitesize' => get_config('core', 'performancesitedata'),
+            'dataplanversion' => dataplanutil::get_tool_version(),
+            'testplansize' => $size,
+            'testplanversion' => util::get_tool_version(),
         );
 
         foreach ($propertiestoupdate as $prop => $value) {

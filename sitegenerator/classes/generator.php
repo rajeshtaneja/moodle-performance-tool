@@ -332,7 +332,7 @@ class generator {
             echo \html_writer::start_tag('ul');
             echo \html_writer::start_tag('li');
         }
-        echo "Executing: " . $featurename;
+        echo "Generating data for: " . $featurename;
         if (!$leaveopen) {
             if (CLI_SCRIPT) {
                 echo "\n";

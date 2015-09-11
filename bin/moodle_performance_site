@@ -52,6 +52,7 @@ list($options, $unrecognized) = cli_get_params(
         'testplan'       => false,
         'proxyurl'       => false,
         'proxyport'      => false,
+        'version'        => false,
     ),
     array(
         'h' => 'help',
@@ -62,6 +63,7 @@ list($options, $unrecognized) = cli_get_params(
         't' => 'testplan',
         'u' => 'proxyurl',
         'p' => 'proxyport',
+        'v' => 'version',
     )
 );
 
@@ -91,6 +93,7 @@ Options:
 --testplan | -t  Create JMX test plan (xs, s, m, l, xl)
 --proxyurl | -u  BrowserMobProxy url should be given with createtestplan (ex: localhost:9090)
 --proxyport | -p Port on which BrowserMobProxy should listen. If not passed then it will use random port.
+--version | -v   Version of the tool, should be either dataplan | testplan
 
 -h, --help Print out this help
 
@@ -124,6 +127,7 @@ require_once(__DIR__ . '/../moodle/config.php');
 require_once(__DIR__ . '/../lib/autoload.php');
 
 raise_memory_limit(MEMORY_HUGE);
+$status = false;
 
 // Create test plan.
 if ($options['install'] || $options['testdata'] || $options['drop'] ||
@@ -147,6 +151,18 @@ if ($options['testplan'] || $options['proxyurl'] || $options['proxyport']) {
         $status = false;
     }
 
+}
+
+// Return version of  the plan.
+if ($options['version']) {
+    if ($options['version'] == 'testplan') {
+        echo \moodlehq\performancetoolkit\testplangenerator\util::get_tool_version();
+        $status = 0;
+
+    } else if ($options['version'] == 'dataplan') {
+        echo \moodlehq\performancetoolkit\sitegenerator\util::get_tool_version();
+        $status = 0;
+    }
 }
 
 // If invalid action passed, then show help, else exist with the return code.
