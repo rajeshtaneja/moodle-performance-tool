@@ -123,8 +123,8 @@ function clean_create_dir_structure {
     fi
 
     # Create moodle dir. if not present.
-    if [ ! -e "moodle" ]; then
-        mkdir -m $PERMISSIONS "moodle" || \
+    if [ ! -e ${PERFORMANCE_TOOL_DIRECTORY}'/moodle' ]; then
+        mkdir -m $PERMISSIONS ${PERFORMANCE_TOOL_DIRECTORY}'/moodle' || \
             throw_error "There was a problem creating moodle/ directory"
     fi
 }

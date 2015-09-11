@@ -39,7 +39,7 @@ LOGS_DIR=${CURRENT_FILE_DIRECTORY}'/../jmeter_data'
 # Defaults when jmeter is running in the same server than the web server.
 # These will be updated if passed as option to this script.
 TESTPLAN_JMX=${testplandataroot}/testplan.jmx
-TESTPLAN_SITE_DATA_FILE='moodle/site_data.properties'
+TESTPLAN_SITE_DATA_FILE=${CURRENT_FILE_DIRECTORY}'/../moodle/site_data.properties'
 
 # Check if command params are correctly passed.
 check_before_run_cmd $@
@@ -48,10 +48,10 @@ check_before_run_cmd $@
 load_properties $TESTPLAN_SITE_DATA_FILE
 
 # Creating the results cache directory for images.
-if [ ! -d "cache" ]; then
-    mkdir -m 777 "cache"
+if [ ! -d ${CURRENT_FILE_DIRECTORY}'/../cache' ]; then
+    mkdir -m 777 ${CURRENT_FILE_DIRECTORY}'/../cache'
 else
-    chmod 777 "cache"
+    chmod 777 ${CURRENT_FILE_DIRECTORY}'/../cache'
 fi
 
 # Uses the test plan specified in the CLI call.
@@ -64,8 +64,12 @@ TESTPLAN_INCLUDE_LOGS=' -Jincludelogs='${includelogs}
 TESTPLAN_SAMPLER=' -Jbeanshell.listener.init='${CURRENT_FILE_DIRECTORY}'/../lib/recorderfunctions.bsf'
 
 # Fix jmeter_data pathin recorder.bsf and recorderfunctions.bsf
-sed -i -e 's@".*jmeter_data/@"'${LOGS_DIR}'/@g' ${CURRENT_FILE_DIRECTORY}/../lib/recorderfunctions.bsf
-sed -i -e 's@ ".*jmeter_data/@ "'${LOGS_DIR}'/@g' ${CURRENT_FILE_DIRECTORY}/../lib/recorder.bsf
+# This is commented for now, as we should not be changing the actual code.
+# Best way is to run the jmeter command from the root and all related paths will be sorted.
+#sed -i -e 's@".*jmeter_data/@"'${LOGS_DIR}'/@g' ${CURRENT_FILE_DIRECTORY}/../lib/recorderfunctions.bsf
+#sed -i -e 's@ ".*jmeter_data/@ "'${LOGS_DIR}'/@g' ${CURRENT_FILE_DIRECTORY}/../lib/recorder.bsf
+# Always run jmeter from performance main dir.
+cd $CURRENT_FILE_DIRECTORY/..
 
 # Run it baby! (without GUI).
 echo "#######################################################################"
