@@ -9,6 +9,15 @@ Moodle performance toolkit is a tool for moodle performance analysis. It provide
   - Create JMeter plan (JMX) from behat scenario
   - Run JMeter plan and log information
   - Compare run data
+## Requirements:
+* MySQL or PostgresSQL or Mariadb or MSSQL or oracle
+* git
+* curl
+* PHP 5.4.4+
+* Java 6 or later
+* Jmeter: https://jmeter.apache.org/download_jmeter.cgi binaries (probably you will face problems using apt-get or other package management systems to download it)
+* Browsermob proxy: http://bmp.lightbody.net/
+
 ## Generate test site:
 Tool supports 5 sizes, according to specified size appropriate data will be generated.
 * [xs] - Extra small

@@ -131,7 +131,7 @@ MoodleResult(JMeterContext ctx) {
     }
 
     toPHP() {
-       String php = "$results['"+threadgroupname+"']["+thread+"][] = array(\n";
+       String php = "$results["+thread+"][] = array(\n";
        php += "    'thread'=>"+thread+",\n";        // Int
        php += "    'starttime'=>"+starttime+",\n";      // Long
        php += "    'dbreads'=>"+Integer.parseInt(dbreads)+",\n";    // String => Int
@@ -162,23 +162,27 @@ Runnable mr = MoodleResult(ctx);
 
 // Get the file (it is created in testStarted).
 String filenamepath = "jmeter_data/runs/tmpfilename.php";
+String threadgroupname = ctx.getThreadGroup().getName();
+String filenamepath = "jmeter_data/runs/" + vars.get("runtimestamp") + "_" + StringUtils.replace(threadgroupname, " ", "_") + ".php";
 
 // We add the run info when starting the first thread
-if (JMeterUtils.getProperty("headerprinted") == null) {
+if ((JMeterUtils.getProperty("headerprinted") == null) || !JMeterUtils.getProperty("headerprinted").equals(threadgroupname)) {
 
     // Output headers.
-    JMeterUtils.setProperty("headerprinted", "1");
+    JMeterUtils.setProperty("headerprinted", threadgroupname);
     print(mr.headerToString());
 
-    FileWriter fstream = new FileWriter(filenamepath, true);
+    FileWriter fstream = new FileWriter(filenamepath);
     BufferedWriter out = new BufferedWriter(fstream);
+    out.write("<?php\n");
+    out.write("$threadgroupname = '"+threadgroupname+"';\n");
     out.write("$host = '"+vars.get("host")+"';\n");
     out.write("$sitepath = '"+vars.get("sitepath")+"';\n");
     out.write("$group = '"+EscapeQuotes(props.get("group"))+"';\n");
     out.write("$rundesc = '"+EscapeQuotes(props.get("desc"))+"';\n");
-    out.write("$users = '"+vars.get("users")+"';\n");
-    out.write("$loopcount = '"+vars.get("loops")+"';\n");
-    out.write("$rampup = '"+vars.get("rampup")+"';\n");
+    out.write("$users = '"+Integer.toString(ctx.getThreadGroup().getNumThreads())+"';\n");
+    out.write("$loopcount = '"+ctx.getThreadGroup().getSamplerController().getProperty("LoopController.loops")+"';\n");
+    out.write("$rampup = '"+ctx.getThreadGroup().getProperty("ThreadGroup.ramp_time")+"';\n");
     out.write("$throughput = '"+vars.get("throughput")+"';\n");
     out.write("$dataplansize = '"+vars.get("dataplansize")+"';\n");
     out.write("$baseversion = '"+vars.get("moodleversion")+"';\n");
@@ -189,9 +193,6 @@ if (JMeterUtils.getProperty("headerprinted") == null) {
     out.write("$testplansize = '"+EscapeQuotes(vars.get("testplansize"))+"';\n");
     out.write("$testplanversion = '"+EscapeQuotes(vars.get("testplanversion"))+"';\n");
     out.close();
-
-    // Send the run timestamp to set it as run filename.
-    props.put("filepath", "jmeter_data/runs/" + vars.get("runtimestamp") + ".php");
 }
 
 FileWriter fstream = new FileWriter(filenamepath, true);

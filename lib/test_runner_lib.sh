@@ -42,8 +42,8 @@ function check_before_run_cmd {
 
     while getopts 'hn:d:u:l:r:t:p:f:s' flag; do
       case "${flag}" in
-        n) TESTPLAN_GROUP=' -Jgroup='\"${OPTARG}\" ;;
-        d) TESTPLAN_DESC=' -Jdesc='\"${OPTARG}\" ;;
+        n) TESTPLAN_GROUP=' -Jgroup='"${OPTARG}" ;;
+        d) TESTPLAN_DESC=' -Jdesc='"${OPTARG}" ;;
         u) TESTPLAN_USERS=' -Jusers='${OPTARG} ;;
         l) TESTPLAN_LOOP=' -Jloops='${OPTARG} ;;
         r) TESTPLAN_RAMPUP=' -Jrampup='${OPTARG} ;;

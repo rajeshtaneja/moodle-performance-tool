@@ -11,14 +11,6 @@
         }
     ],
     "require": {
-        "rmccue/requests": ">=1.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "moodlehq\\performancetoolkit\\": "/classes",
-            "moodlehq\\performancetoolkit\\sitegenerator\\": "/sitegenerator/classes",
-            "moodlehq\\performancetoolkit\\testplangenerator\\": "/testplangenerator/classes"
-        }
-    },
-    "bin": ["bin/moodle_performance_site"]
+        "apache/log4php": "2.3.0"
+    }
 }

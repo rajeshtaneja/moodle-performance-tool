@@ -61,7 +61,6 @@ TESTPLAN_RUN_OUTPUT=${LOGS_DIR}'/runs_outputs/'${datestring}'.output'
 
 # Include logs string.
 TESTPLAN_INCLUDE_LOGS=' -Jincludelogs='${includelogs}
-TESTPLAN_SAMPLER=' -Jbeanshell.listener.init='${CURRENT_FILE_DIRECTORY}'/../lib/recorderfunctions.bsf'
 
 # Fix jmeter_data pathin recorder.bsf and recorderfunctions.bsf
 # This is commented for now, as we should not be changing the actual code.
@@ -90,7 +89,6 @@ $jmeterbin \
     -Jsiteversion="$siteversion" \
     -Jsitebranch="$sitebranch" \
     -Jsitecommit="$sitecommit" \
-    $TESTPLAN_SAMPLER \
     $TESTPLAN_INCLUDE_LOGS \
     $TESTPLAN_USERS \
     $TESTPLAN_LOOP \

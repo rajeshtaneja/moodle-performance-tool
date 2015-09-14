@@ -27,6 +27,10 @@ CURRENT_FILE_DIRECTORY=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 # Check if command params are correctly passed.
 check_before_run_cmd $@
 
+# Download log4php
+curl -s http://getcomposer.org/installer | php
+php composer.phar install
+
 # Hardcoded values.
 readonly SITE_FULL_NAME="Performance test site"
 readonly SITE_SHORT_NAME="Performance test site"
